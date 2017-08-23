@@ -5,6 +5,8 @@
  */
 
 import React, {Component} from 'react';
+import { Dimensions } from 'react-native';
+
 import {
     AppRegistry,
     StyleSheet,
@@ -17,7 +19,8 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-
+const maxHeight = Dimensions.get('window').height;
+const maxWidth = Dimensions.get('window').width;
 
 export default class OneTab extends Component {
     static navigationOptions = {
@@ -25,13 +28,19 @@ export default class OneTab extends Component {
         // header:()=>{
         //     title:'主页'
         // }
+        tabBarIcon: ({ tintColor }) => (
+            <Image
+                source={require('../img/wenhao.png')}
+                style={[styles.icon, {tintColor: tintColor}]}
+            />
+        ),
     };
 
 
     render() {
         const { navigate } = this.props.navigation;
+        // const { params } = this.props.navigation.state;
         return (
-
 
         <ScrollView>
                 <View>
@@ -44,10 +53,13 @@ export default class OneTab extends Component {
                         navigate('MSet', { name: 'Jane' })
                     }
                     />
-
+            <Button
+                title="Go to list"
+                onPress={() => this.props.navigation.navigate('Two')}
+            />
                 {/*<Image source={require('../ireaded/img/favicon.png')} style={{height:200,width:300}}/>*/}
                 <Image source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
-                       style={{width: 400, height: 400}} />
+                       style={{width: maxWidth, height: 400}} />
             </ScrollView>
 
 

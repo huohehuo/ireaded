@@ -30,7 +30,7 @@ var jsonurl="http://api.tianapi.com/wxnew/?key=e389820925ea6e0ca99cc0ea58863e1f&
 const restAction = NavigationActions.reset({
     index: 0,
     actions: [
-        NavigationActions.navigate({routeName: 'Profile'})
+        NavigationActions.navigate({routeName: 'MLog'})
     ]
 });
 
@@ -51,12 +51,12 @@ export default class Welcome extends Component {
         // const splashImg = require('../fimg/splash.png');
         return (
             <ImageBackground style={{height: maxHeight, width: maxWidth}}
-                             source={require('../ireaded/img/splash.png')}
+                             source={require('../img/splash.png')}
                              resizeMode='cover'>
                 <View style={{flex:1,flexDirection: 'column',justifyContent: 'center',alignItems:'center'}}>
                 <Text style={styles.weltxt}> 欢迎来到IREADED </Text>
                     <Image
-                        source={require('../ireaded/img/wenhao.png')}
+                        source={require('../img/wenhao.png')}
                         style={{height:80,width:80,justifyContent:'center'}}
                     />
                 </View>

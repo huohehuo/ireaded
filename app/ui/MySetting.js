@@ -3,6 +3,7 @@
  * https://github.com/facebook/react-native
  * @flow
  */
+import mycss from '../css/styles'
 import React, {Component} from 'react';
 import {
     AppRegistry,
@@ -14,25 +15,62 @@ import {
     ScrollView,
     FlatList,
     TouchableHighlight,
+
     View,
     ListView
 } from 'react-native';
-
+import TabNavigator from 'react-native-tab-navigator';
+import OneTab from "./OneTab";
+import TwoTab from "./TwoTab";
 
 
 export default class MySetting extends Component {
     // static navigationOptions = {
     //     title: '主页',
     // };
-    render() {
-        // const { navigate } = this.props.navigation;
-        return (
-            <Text>你好啊ss</Text>
+    // 构造
+    constructor(props) {
+        super(props);
+        // 初始状态
+        this.state = {
+            selectedTab:'home',
+            selectedTabw:'profile',
+        };
+    }
 
+    // 返回TabBar的Item
+    renderTabBarItem(title, selectedTab, image, selectedImage, component) {
+        return(
+            <TabNavigator.Item
+                selected={this.state.selectedTab === selectedTab}
+                title={title}
+                selectedTitleStyle={{color:'black'}}
+                renderIcon={() => <Image source={require('../img/wenhao.png')}/>}
+                renderSelectedIcon={() => <Image source={require('../img/wenhao.png')}/>}
+                onPress={() => this.setState({ selectedTab: selectedTab })}>
+                // 添加导航功能
+                <Navigator
+                    // 设置路由
+                    initialRoute={{
+                        name:selectedTab,
+                        component:component
+                    }}
+
+                    renderScene={(route, navigator) => {
+                        let Component = route.component;
+                        return <Component {...route.params} navigator={navigator} />
+                    }}
+                />
+            </TabNavigator.Item>
         );
     }
 
+    render() {
+        return (
 
+        <Text/>
+        );
+    }
 
 
   //   static navigationOptions = {
@@ -116,11 +154,7 @@ export default class MySetting extends Component {
   //     .done();
   // }
 }
- 
- /*输出log*/
-function globalFunction(input){
-    console.log(input);
-}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -128,35 +162,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 5,
-    },
-
-    mys: {
-        color: 'blue',
-        fontWeight: 'bold',
-        fontSize: 30,
-    },
-    red: {
-        color: 'red',
-    },
-        item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-    },
-    pichead:{
-        height:100,
-        width:100,
-        color:'red',
-    },
+    tabbarIconStyle: {
+        // width:Platform.OS === 'ios' ? 30 : 25,
+        // height:Platform.OS === 'ios' ? 30 : 25,
+    }
 });
 
 

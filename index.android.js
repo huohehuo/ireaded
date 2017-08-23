@@ -3,9 +3,10 @@
  * https://github.com/facebook/react-native
  * @flow
  */
-import MainScreen from './MainScreen';
-import Welcome from './Welcome';
-import MySetting from './MySetting';
+import Welcome from './app/ui/Welcome';
+import MainScreen from './app/ui/MainScreen';
+import MySetting from './app/ui/MySetting';
+import MLogin from './app/ui/MLogin';
 
 
 import React, {Component} from 'react';
@@ -23,8 +24,9 @@ import {
 } from 'react-navigation';
 
 const ireaded = StackNavigator({
-        SpView: {screen: Welcome},
-        Main: {screen: MainScreen},
+        SpView: {screen: Welcome},//1
+        MLog: {screen: MLogin},//2
+        MMain: {screen: MainScreen},//3
         MSet: {screen: MySetting},
 
         // Home: { screen: Tabs },
