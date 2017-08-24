@@ -5,8 +5,8 @@
  */
 
 import React, {Component} from 'react';
+import CONF from '../Config'
 import {Dimensions} from 'react-native';
-
 import {
     AppRegistry,
     StyleSheet,
@@ -16,13 +16,15 @@ import {
     TextInput,
     ScrollView,
     FlatList,
+    AsyncStorage,
     ListView,
     View
 } from 'react-native';
 import {
     PullList
 } from 'react-native-pull';
-
+import NoDataView from "./NoDataView";
+import HBase from "../http/HTTPBase"
 // const maxHeight = Dimensions.get('window').height;
 // const maxWidth = Dimensions.get('window').width;
 
@@ -39,6 +41,7 @@ export default class TwoTab extends Component {
 
     constructor(props) {
         super(props);
+        tab2=this;
         // const dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         // this.state = {
         //     source: dataSource.cloneWithRows(['星期一：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：', '星期八：'])
@@ -46,10 +49,44 @@ export default class TwoTab extends Component {
         // 初始状态
         this.state = {
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+            newsSum:2,
         };
         // 绑定
+        this.newslist = [];
         this.fetchData = this.fetchData.bind(this);
+    }
 
+    //判断是否有数据，有数据就显示ListView
+    HasDataListView() {
+        if (this.state.loaded) {
+            return <PullList style={{height: maxHeight, width: maxWidth}}
+                             onPullRelease={(resolve) => this.fetchData(resolve)}
+                             dataSource={this.state.dataSource}
+                             showsHorizontalScrollIndicator={false}
+                             initialListSize={5}
+                             onEndReached={(resolve) => this.fetchData(resolve)}
+                             onEndReachedThreshold={60}
+                             renderHeader={this.renderHeader}
+                             renderRow={(rowData) =>
+                                 <View style={{backgroundColor: '#33dcff', flexDirection: 'column'}}>
+                                     {/*<Image source={{uri: rowData.image}} style={{width: maxWidth, height: 400}} />*/}
+
+                                     <Image
+                                         source={{uri: rowData.picUrl === '' ? 'https://facebook.github.io/react/img/logo_og.png' : rowData.picUrl}}
+                                         style={{width: maxWidth, height: 400}}/>
+                                     <View style={mycss.itemlist}>
+                                         <Text>{rowData.title}</Text>
+                                     </View>
+                                     <View style={mycss.timeitem}>
+                                         <Text style={mycss.timetxt}>2012.12.25</Text>
+                                     </View>
+                                     <Text style={mycss.dline}/>
+                                 </View>
+                             }
+            />
+        } else {
+            <NoDataView style={{height: maxHeight, width: maxWidth}}/>
+        }
     }
 
     render() {
@@ -101,24 +138,23 @@ export default class TwoTab extends Component {
                 {/*style={[mycss.ivbtn,{position:'absolute',top:maxHeight-180}]}*/}
                 {/*/>*/}
                 {/*</View>*/}
-
-
                 <PullList style={{height: maxHeight, width: maxWidth}}
                           onPullRelease={(resolve) => this.fetchData(resolve)}
                           dataSource={this.state.dataSource}
                           showsHorizontalScrollIndicator={false}
-                    // initialListSize={5}
+                          initialListSize={5}// 优化:一次渲染几条数据
                           renderHeader={this.renderHeader}
+                          onEndReached={this.fetchDatab()}
+                          onEndReachedThreshold={6}
+                          renderFooter={this.renderFooter}
                           renderRow={(rowData) =>
                               <View style={{backgroundColor: '#33dcff', flexDirection: 'column'}}>
                                   {/*<Image source={{uri: rowData.image}} style={{width: maxWidth, height: 400}} />*/}
-
                                   <Image
                                       source={{uri: rowData.picUrl === '' ? 'https://facebook.github.io/react/img/logo_og.png' : rowData.picUrl}}
                                       style={{width: maxWidth, height: 400}}/>
                                   <View style={mycss.itemlist}>
                                       <Text>{rowData.title}</Text>
-                                      <Text>周口店山顶洞人</Text>
                                   </View>
                                   <View style={mycss.timeitem}>
                                       <Text style={mycss.timetxt}>2012.12.25</Text>
@@ -127,7 +163,6 @@ export default class TwoTab extends Component {
                               </View>
                           }
                 />
-
             </View>
         );
     }
@@ -159,6 +194,14 @@ export default class TwoTab extends Component {
             </View>
         );
     }
+    // ListView尾部
+    renderFooter() {
+        return (
+            <View style={{width: maxWidth, height: 30}}>
+                <Text>更新多一条</Text>
+            </View>
+        );
+    }
 
     componentDidMount() {
         this.fetchData();
@@ -166,24 +209,131 @@ export default class TwoTab extends Component {
 
     // 网络请求
     fetchData(resolve) {
-        //http://api.tianapi.com/vr/?key=e389820925ea6e0ca99cc0ea58863e1f&num=10
-        // fetch('http://api.tianapi.com/wxnew/?key=e389820925ea6e0ca99cc0ea58863e1f&num=3',{method:'GET'})
-        fetch('http://api.tianapi.com/vr/?key=e389820925ea6e0ca99cc0ea58863e1f&num=10')
-            .then((response) => response.json())
+        // 读取id
+        AsyncStorage.getItem('newsSum')
+            .then((value) => {
+                // 加载更多数据
+                this.loadMoreData(value);
+            })
+        let params = {
+            "key": 'e389820925ea6e0ca99cc0ea58863e1f',
+            "num": ''+this.state.newsSum,
+        };
+        HBase.toGet(CONF.website, params)
             .then((responseData) => {
+                console.log("loading......");
+                    // 清空数组
+                    this.newslist=[],
+                // 拼接数据
+                    this.newslist = this.newslist.concat(responseData.newslist),
                 this.setState({
                     dataSource: this.state.dataSource.cloneWithRows(responseData.newslist),
                     loaded: true,
                 });
                 if (resolve !== undefined) {
                     setTimeout(() => {
-                        resolve();//关闭动画
+                        resolve();
+                        tab2.getNum();
                     }, 1000);
                 }
-            }).catch((error) => {
-            alert("网络加载错误。。。" + error.toString())
-        })
-            .done()
+            })
+            .catch((error) => {
+                alert("net error。。。" + error.toString())
+            })
+
+
+        //http://api.tianapi.com/vr/?key=e389820925ea6e0ca99cc0ea58863e1f&num=10
+        // fetch('http://api.tianapi.com/wxnew/?key=e389820925ea6e0ca99cc0ea58863e1f&num=3',{method:'GET'})
+        // fetch('http://api.tianapi.com/vr/?key=e389820925ea6e0ca99cc0ea58863e1f&num=10')
+        //     .then((response) => response.json())
+        //     .then((responseData) => {
+        //     console.log("加载网络数据")
+        //         this.setState({
+        //             dataSource: this.state.dataSource.cloneWithRows(responseData.newslist),
+        //             loaded: true,
+        //         });
+        //         if (resolve !== undefined) {
+        //             setTimeout(() => {
+        //                 resolve();//关闭动画
+        //             }, 1000);
+        //         }
+        //     }).catch((error) => {
+        //     alert("网络加载错误。。。" + error.toString())
+        // })
+        //     .done()
+    }
+    // 网络请求
+    fetchDatab() {
+
+        // 读取id
+        AsyncStorage.getItem('newsSum')
+            .then((value) => {
+                // 加载更多数据
+                // this.loadMoreData(value);
+        let params = {
+            "key": 'e389820925ea6e0ca99cc0ea58863e1f',
+            "num": value,
+        };
+        HBase.toGet(CONF.website, params)
+            .then((responseData) => {
+                console.log("loading......");
+                    // 清空数组
+                    this.newslist=[],
+                // 拼接数据
+                    this.newslist = this.newslist.concat(responseData.newslist),
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(responseData.newslist),
+                    loaded: true,
+                });
+                if (resolve !== undefined) {
+                    setTimeout(() => {
+                        resolve();
+                        tab2.getNum();
+                    }, 1000);
+                }
+            })
+            .catch((error) => {
+                alert("net error。。。" + error.toString())
+            })
+            });
+
+
+        //http://api.tianapi.com/vr/?key=e389820925ea6e0ca99cc0ea58863e1f&num=10
+        // fetch('http://api.tianapi.com/wxnew/?key=e389820925ea6e0ca99cc0ea58863e1f&num=3',{method:'GET'})
+        // fetch('http://api.tianapi.com/vr/?key=e389820925ea6e0ca99cc0ea58863e1f&num=10')
+        //     .then((response) => response.json())
+        //     .then((responseData) => {
+        //     console.log("加载网络数据")
+        //         this.setState({
+        //             dataSource: this.state.dataSource.cloneWithRows(responseData.newslist),
+        //             loaded: true,
+        //         });
+        //         if (resolve !== undefined) {
+        //             setTimeout(() => {
+        //                 resolve();//关闭动画
+        //             }, 1000);
+        //         }
+        //     }).catch((error) => {
+        //     alert("网络加载错误。。。" + error.toString())
+        // })
+        //     .done()
+    }
+
+    getNum(){
+        AsyncStorage.setItem('newsSum',parseInt(this.state.newsSum)+1+"");
+        // console.log("the loading num:"+tab2.state.newsSum);
+        console.log("the loading num:"+this.state.newsSum);
+        // AsyncStorage.multiGet(['newsSum'], function (errs, result) {
+        //     if (errs) {
+        //         console.log("get data error");
+        //         return;
+        //     } else {
+        //         console.log("get data succeed");
+        //         tab2.setState({
+        //         newsSum: (result[0][1] != null) ? result[0][1] : 2,
+        //         })
+        //     }
+        // });
     }
 
 }

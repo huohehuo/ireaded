@@ -20,6 +20,8 @@ import {
     View,
     Alert,
     DeviceEventEmitter,
+    TouchableWithoutFeedback,
+    AsyncStorage,
     ListView
 } from 'react-native';
 import {
@@ -45,10 +47,13 @@ export default class MainScreens extends Component {
     constructor(props) {
 
         super(props);
-        btnss=this;
+        thisview = this;
         this.state = {
             isHiddenTabBar: false,   // 是否隐藏tabbar
+            getName: '',
+            getPwd:'',
         };
+
     }
 
     // static navigationOptions = {
@@ -91,32 +96,24 @@ export default class MainScreens extends Component {
 
     });
 
-    showAlert = () => {
-        this.showAlert1();
-    };
-
-    showAlert1() {
-        Alert.alert('test');
-    }
-
-
     render() {
-        const {navigate} = this.props.navigation;
+        // const {navigate} = this.props.navigation;
+        // this.setState.getName=this.navigationOptions.navigation.state.params.name;
         return (
             <View style={{flex: 1}}>
+                <TouchableWithoutFeedback
+
+                >
+                    <View>
                 <Button
-                    // style={btnss.state.isHiddenTabBar  ? {backgroundColor: '#aa0018'} : {
-                    //     height: 0,
-                    //     overflow: 'hidden',
-                    //     backgroundColor: '#aa000d'
-                    // }}
-                    title="TESt this button"
+                    title="TESt this button "
                     onPress={() => {
-// 发送通知
+                            // 发送通知
 //                         DeviceEventEmitter.emit('isHiddenTabBar', false);
-                        if (btnss.state.isHiddenTabBar){
-                            alert("对了")
-                        }else{
+                        if (thisview.state.isHiddenTabBar) {
+                            alert(this.state.getName+"对了")
+                            // this.clear();
+                        } else {
                             alert("没错了")
                         }
                         // navigate('MSet', { name: 'Jane' })
@@ -130,34 +127,81 @@ export default class MainScreens extends Component {
                         //     ],
                         //     {cancelable: false}
                         // )
-                    }
-                    }
+                    }}
+                    onLongPress={()=>{
+                        this.clear();
+                    }}
                 />
+                    </View>
+                </TouchableWithoutFeedback>
+
+                <Text style={thisview.state.isHiddenTabBar  ? {backgroundColor: '#f2eef0'} : {
+                    height: 0,
+                    overflow: 'hidden',
+                    backgroundColor: '#11aa22'
+                }}>欢迎。。。。{this.state.getName}</Text>
                 <MainScreen/>
             </View>
         );
     }
-
-    componentDidMount() {
-        // 发送通知
-        DeviceEventEmitter.emit('isHiddenTabBar', true);
+//清除数据
+    clear() {
+        var _that = this;
+        AsyncStorage.clear(function(err){
+            if(!err){
+                _that.setState({
+                    getName: "",
+                    getPwd: ""
+                });
+                alert('存储的数据已清除完毕!');
+            }
+        });
     }
+    componentDidMount() {
+        let keys = ["name", "pwd"];
+        AsyncStorage.multiGet(keys, function (errs, result) {
+            if (errs) {
+                console.log("get data error");
+                return;
+            } else {
+                console.log("get data succeed");
+                thisview.setState({
+                    getName: (result[0][1] != null) ? result[0][1] : '',
+                    getPwd: (result[1][1] != null) ? result[1][1] : '',
+                })
+                // 发送通知
+                DeviceEventEmitter.emit('isHiddenTabBar', true);
+            }
+        });
+
+    }
+
     componentWillMount() {
-            // alert("dddddd")
+        // alert("dddddd")
         // 注册通知
         this.subscription = DeviceEventEmitter.addListener('isHiddenTabBar', (data) => {
             this.tongZhi(data)
         });
     }
 
-    tongZhi(data){
-        const {navigate} = this.props.navigation;
-        navigate("MSet")
+    tongZhi(data) {
+        // const {navigate} = this.props.navigation;
+        // navigate("MSet")
         this.setState({
             isHiddenTabBar: data
         });
-
+        if (data) {
+            console.log("data == true"+this.state.getName);
+            if(this.state.getName !==''){
+                alert("欢迎" + this.state.getName + "来到IReaded")
+            }else{
+                console.log("data == false");
+            }
+        } else {
+            alert("通知出错了")
+        }
     }
+
     componentWillUnmount() {
         // 销毁
         this.subscription.remove();

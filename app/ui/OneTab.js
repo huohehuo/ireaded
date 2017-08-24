@@ -38,7 +38,7 @@ export default class OneTab extends Component {
 
 
     render() {
-        const { navigate } = this.props.navigation;
+        const { navigate } = thisview.props.navigation;
         // const { params } = this.props.navigation.state;
         return (
 
@@ -48,9 +48,9 @@ export default class OneTab extends Component {
 
                 </View>
                     <Button
-                    title="TESt this button"
+                    title="go to setting "
                     onPress={() =>
-                        navigate('MSet', { name: 'Jane' })
+                        navigate('MSet')
                     }
                     />
             <Button
