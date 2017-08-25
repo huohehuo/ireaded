@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#2F445A</color>
+    <color name="but_bg_login">#9fff</color>
+    <color name="bg_white">#fff</color>
+
+    <color name="bg_black">#000</color>
+
+    <color name="bg_snackbar_txt">#50E2C1</color>
+    <color name="bg_green">#0FDBC4</color>
+
+    <color name="theme">#414a58</color>
+    <color name="theme_light">#66717f</color>
+    <color name="gray_text">#a1a1a1</color>
+
+    <color name="colorPrimaryBlack">#100000</color>
+    <color name="colorPrimaryDarkBlack">#000000</color>
+    <color name="colorAccentBlack">#3f4a57</color>
+
+    <color name="colorLoadMoreButtonPressed">#A8A8A8</color>
+    <color name="pop_up_bg">#82d9d3d3</color>
+    <color name="gift_msg_text_color">#fac365</color>
+    <color name="tool_bar_bg">#363E5D</color>
+    <color name="tab_selected_bg">#67B8AA</color>
+    <color name="light_blue">#83ded0</color>
+    <color name="comment_blue">#5a6da1</color>
+    <color name="white">#FFF</color>
+    <color name="block_gray">#aaaaaa</color>
+
+
+    <color name="block_account_left">#9B9B9B</color>
+    <color name="block_account_rigth">#4A4A4A</color>
+    <color name="bg">#ededed</color>
+    <color name="error_red">#f24f4f</color>
+    <color name="certified">#FF84CA51</color>
+    <color name="certifying">#FFEBA33E</color>
+    <color name="refuse">#FFE86E6A</color>
+
+    <color name="circle_progress_all">#ED4C49</color>
+    <color name="circle_progress_seven">#F6A623</color>
+    <color name="circle_progress_five">#0FDBC4</color>
+    <color name="circle_progress_txt">#80FFFFFF</color>
+
+    <color name="cpb_grey">#ffdedede</color>
+    <color name="cpb_blue">#ff0099cc</color>
+    <color name="cpb_blue_dark">#ff00719b</color>
+    <color name="cpb_red">#ffff4444</color>
+    <color name="cpb_red_dark">#ffcd3a3a</color>
+    <color name="cpb_green">#ff99cc00</color>
+    <color name="cpb_green_dark">#ff6d9b00</color>
+    <color name="cpb_white">@android:color/white</color>
+</resources>

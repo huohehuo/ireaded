@@ -7,6 +7,7 @@ import Welcome from './app/ui/Welcome';
 import MainScreen from './app/ui/MainScreen';
 import MySetting from './app/ui/MySetting';
 import MLogin from './app/ui/MLogin';
+import MModal from './app/ui/MyModal';
 
 
 import React, {Component} from 'react';
@@ -28,6 +29,7 @@ const ireaded = StackNavigator({
         MLog: {screen: MLogin},//2
         MMain: {screen: MainScreen},//3
         MSet: {screen: MySetting},
+        MMdl: {screen: MModal},
 
         // Home: { screen: Tabs },
         // HomeTwo: {

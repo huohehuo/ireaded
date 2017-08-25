@@ -31,8 +31,8 @@ import {
 import Test from '../ui/Test'
 
 const MainScreen = TabNavigator({
-    Two: {screen: TwoTab},
     One: {screen: OneTab},
+    Two: {screen: TwoTab},
 }, {
     tabBarOptions: {
         activeTintColor: '#e91e63',//tab标题颜色
@@ -88,7 +88,7 @@ export default class MainScreens extends Component {
                 style={{width: 40, height: 40}}
                 onPress={
                     () => {
-                        mviod.gotoSetting()
+                        mLogin.gotoSetting()
                     }
                 }>
                 <Image source={require('../img/wenhao.png')}/>

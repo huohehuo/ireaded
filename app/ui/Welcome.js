@@ -43,9 +43,9 @@ export default class Welcome extends Component {
         //     // ...defaultHeader,//默认预设
         //     visibility:true,//覆盖预设中的此项
         // }),
-        cardStack: {
-            gesturesEnabled: true  // 是否可以右滑返回
-        }
+        // cardStack: {
+        //     gesturesEnabled: true  // 是否可以右滑返回
+        // }
     };
     render() {
         // const splashImg = require('../fimg/splash.png');
